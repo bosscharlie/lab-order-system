@@ -6,16 +6,16 @@ from . import views
 
 
 urlpatterns=[
-    #首页
-    path('',views.home),
-    #默认展示预定信息
-    path('index/',views.index),
-    #登录界面
+    # #首页
+    # path('',views.home),
+    # #默认展示预定信息
+    # path('index/',views.index),
+    # #登录界面
     path('login/',views.acc_login),
-    #处理预定请求
-    path('book/',views.book),
-    #登出
-    path('logout/',views.acc_logout),
-    #注册界面
-    path('reg/',views.reg),
+    # #处理预定请求
+    # path('book/',views.book),
+    # #登出
+    # path('logout/',views.acc_logout),
+    # #注册界面
+    # path('reg/',views.reg),
 ]

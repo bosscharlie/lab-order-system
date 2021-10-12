@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>用户登录</title>
-    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="#" />
 </head>
 <h3 class="text-center" style="color:orangered">欢迎登陆会议室预定系统</h3>
 <br>
@@ -33,13 +34,34 @@
     </div>
 </div>
 
-<script src="../static/js/jquery-3.6.0.min.js"></script>
-<script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/js/jquery-3.6.0.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 <script>
-
     $("#login_btn").click(function(){
-        console.log("click")
+        var username=$("#username").val();
+        var password=$("#pwd").val();
+        $.ajax({
+            url:"/roomorder/login/",
+            type:"post",
+            dataType:"json",
+            data:{
+                username:username,
+                pwd:password,
+                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+            },
+            success:function(data){
+                console.log(data);
+                if(data.status){
+                    $(".login-error").text(data.msg);
+                }else{
+                    location.href=data.msg;
+                }
+            }
+        });
     });
+    $("#username,#pwd").focus(function(){
+        $(".login-error").text("");
+    })
 </script>
 </body>
 </html>
