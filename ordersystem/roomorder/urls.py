@@ -8,8 +8,8 @@ from . import views
 urlpatterns=[
     # #首页
     # path('',views.home),
-    # #默认展示预定信息
-    # path('index/',views.index),
+    #默认展示预定信息
+    path('index/',views.index),
     # #登录界面
     path('login/',views.acc_login),
     # #处理预定请求

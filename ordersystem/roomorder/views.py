@@ -23,3 +23,8 @@ def acc_login(request):
             res["msg"]="登陆认证失败，请检查用户名及密码是否正确"
         return JsonResponse(res)
     return render(request,'login.html')
+
+
+#@login_required(login_url="/login/")
+def index(request):
+    return render(request,'index.html')
