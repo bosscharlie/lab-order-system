@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>index</title>
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/static/jquery.datetimepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/jquery.datetimepicker.min.css"/>
     <style>
         .td_active{
             background-color:purple;
@@ -14,11 +14,63 @@
             top:215px!important;
         }
 
+
+
     </style>
 </head>
 <body>
 <div class="page-header">
-    <h1 class="text-center">欢迎来到会议室预定系统<small class="text-info">{{request.user.username}}</small> </h1>
+    <h1 class="text-center">欢迎来到会议室预定系统<small class="text-info">{{request.user.username}}</small></h1>
 </div>
+
+<div class="text-center">
+    <span>当前用户：</span>
+    <span>其他用户：</span>
+</div>
+<br>
+<br>
+<p class="text-center">
+    <span><a href="/home/">返回首页</a> </span>
+    <span><a href="/logout/">注册</a> </span>
+</p>
+<div class="calender pull-right">
+    <div class="input-group" style="width: 230px;">
+        <span class="text-warning">注意：当前日期高亮显示</span>
+        <input type="text" autocomplete="off" class="form-control" id="datetimepicker11" placeholder="请选择日期"/>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar">
+            </span>
+        </span>
+    </div>
+</div>
+<br>
+<br>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>会议室/时间</th>
+        {% for row in time_choice %}
+        <th>{{ row.1 }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {{ htmls|safe }}
+    </tbody>
+</table>
+<div>{% csrf_token %}</div>
+<div class="col-lg-offset-6">
+    <button class="btn btn-info book-btn">预定</button>
+</div>
+
+<script src="/static/js/jquery-3.6.0.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/jquery.datetimepicker.full.min.js"></script>
+<script>
+    $('#datetimepicker11').datetimepicker({
+        timepicker:false,
+        format:"Y-m-d"
+    });
+</script>
 </body>
 </html>
