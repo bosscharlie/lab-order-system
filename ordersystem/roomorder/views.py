@@ -56,3 +56,8 @@ def index(request):
                 htmls+='<td class="item" room_id={} time_id={}></td>'.format(room.pk,time[0])
         htmls+="</tr>"
     return render(request,'index.html',{"time_choice":time_choice,"htmls":htmls,})
+
+# def book(request):
+#     if request.method == "POST":
+#         choose_date=request.POST.get("choose_date")
+#
