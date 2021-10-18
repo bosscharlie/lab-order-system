@@ -6,7 +6,12 @@ from django.contrib.auth.models import AbstractUser
 
 
 class UserInfo(AbstractUser):
-    tel = models.CharField(max_length=32, verbose_name="联系电话")
+    # coursename=models.CharField(max_length=32,verbose_name="课程名称")
+    # printel=models.CharField(max_length=32,verbose_name="负责人及联系电话")
+    # bookertel=models.CharField(max_length=32,verbose_name="预约人及电话")
+    # adminer=models.CharField(max_length=32,verbose_name="实验室审批人")
+    # tel = models.CharField(max_length=32, verbose_name="联系电话")
+    pass
 
 
 class Room(models.Model):

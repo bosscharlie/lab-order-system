@@ -17,7 +17,7 @@ def acc_login(request):
         user=authenticate(username=username,password=password)
         if user:
             login(request,user)
-            res["msg"]="/index/"
+            res["msg"]="/roomorder/index/"
         else:
             #登陆认证失败
             res["status"]=1
@@ -60,6 +60,7 @@ def index(request):
 
 def book(request):
     if request.method == "POST":
+        print(request.POST)
         choose_date=request.POST.get("choose_date")
         #获取会议室时间段列表
         time_choice=models.Book.time_choice

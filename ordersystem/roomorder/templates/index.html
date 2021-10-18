@@ -57,7 +57,7 @@
 </table>
 <div>{% csrf_token %}</div>
 <div class="col-lg-offset-6">
-    <button class="btn btn-info book-btn">预定</button>
+    <button class="btn btn-info book_btn">预定</button>
 </div>
 
 <script src="/static/js/jquery-3.6.0.min.js"></script>
@@ -89,8 +89,6 @@
         $(".item").click(function(){
             var room_id=$(this).attr("room_id");
             var time_id=$(this).attr("time_id");
-            //alert(room_id);
-            //alert(room_id);
             //取消预定
             //TODO 单拿出来放一个取消按钮
             if($(this).hasClass("info")){
@@ -137,6 +135,7 @@
 
     //ajax与后端通信
     $(".book_btn").click(function(){
+        console.log("click");
         $.ajax({
             url:"/roomorder/book/",
             type:"post",
