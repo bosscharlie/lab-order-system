@@ -13,6 +13,7 @@
         #my_div{
             top:215px!important;
         }
+
     </style>
 </head>
 <body>
@@ -20,15 +21,15 @@
     <h1 class="text-center">欢迎来到会议室预定系统<small class="text-info">{{request.user.username}}</small></h1>
 </div>
 
-<div class="text-center">
-    <span>当前用户：</span>
-    <span>其他用户：</span>
-</div>
+<!--<div class="text-center">-->
+<!--    <span>当前用户：</span>-->
+<!--    <span>其他用户：</span>-->
+<!--</div>-->
 <br>
 <br>
 <p class="text-center">
-    <span><a href="/home/">返回首页</a> </span>
-    <span><a href="/logout/">注册</a> </span>
+    <span><a href="/roomorder/login/">返回首页</a> </span>
+    <span><a href="/roomorder/logout/">退出登陆</a> </span>
 </p>
 <div class="calender pull-right">
     <div class="input-group" style="width: 230px;">
@@ -47,7 +48,7 @@
         <tr>
             <th>会议室（可容纳人数）/时间</th>
             {% for row in time_choice %}
-            <th>{{ row.1 }}</th>
+            <th id="time{{row.0}}">{{ row.1 }}</th>
             {% endfor %}
         </tr>
     </thead>
@@ -56,9 +57,71 @@
     </tbody>
 </table>
 <div>{% csrf_token %}</div>
-<div class="col-lg-offset-6">
-    <button class="btn btn-info book_btn">预定</button>
-</div>
+<!--<div class="col-lg-offset-6">-->
+<!--    <button class="btn btn-info book_btn">预定</button>-->
+<!--</div>-->
+<!--模态框展示详情信息-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">×
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+				</h4>
+			</div>
+			<div class="modal-body">
+                <table class="table table" id="used">
+                    <thead>
+                        <tr>
+                            <th>预约详情</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>课程名：<span id="coursenamet"></span></th>
+                        </tr>
+                        <tr>
+                            <th>负责老师：<span id="teachert"></span></th>
+                        </tr>
+                        <tr>
+                            <th>联系人及电话：<span id="printelt"></span></th>
+                        </tr>
+                        <tr>
+                            <th>预约人及电话：{{request.user.username}}</th>
+                        </tr>
+                        <tr>
+                            <th>实验室审批人：<span id="adminert"></span></th>
+                        </tr>
+                        <tr>
+                            <th>使用照片：</th>
+                        </tr>
+                    </tbody>
+                </table>
+				<form class="form-group" id="touse">
+                    <label>课程名</label>
+                    <input type="text" class="form-control" id="coursename">
+                    <label>负责老师</label>
+                    <input type="text" class="form-control" id="teacher">
+                    <label>联系人及电话</label>
+                    <input type="text" class="form-control" id="printel">
+                    <label>预约人及电话：</label>
+                    <input type="text" class="form-control" id="bookertel" placeholder={{request.user.username}} disabled>
+                    <label>实验室审批人：</label>
+                    <input type="text" class="form-control" id="adminer" disabled>
+                    <label>使用照片：</label>
+                    <input type="text" class="form-control" >
+                </form>
+			</div>
+			<div class="modal-footer" id="btns">
+                <button class="btn btn-info book_btn">预定</button>
+                <button class="btn btn-info some_btn">批量预定</button>
+                <button class="btn btn-info del_btn">删除预定</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script src="/static/js/jquery-3.6.0.min.js"></script>
 <script src="/static/bootstrap/js/bootstrap.min.js"></script>
@@ -81,45 +144,39 @@
     };
     TODAY_DATE=new Date().myMet("yyyy-MM-dd");
     var POST_DATA={
-        "ADD":{},
-        "DEL":{},
-    };
+        "room_id":'',
+        "time_id":'',
+        "coursename":'',
+        "teacher":'',
+        "printel":'',
+        "bookertel":'',
+        "adminer":'',
+    }
     function TdClick(){
         //td绑定事件,单击一个单元格触发的事件
         $(".item").click(function(){
+            POST_DATA.room_id=$(this).attr("room_id");
+            POST_DATA.time_id=$(this).attr("time_id");
             var room_id=$(this).attr("room_id");
             var time_id=$(this).attr("time_id");
-            //取消预定
+            $('#myModalLabel').text("实验室："+$('#room'+POST_DATA.room_id).text()+"    时间段："+$('#time'+POST_DATA.time_id).text());
+            $('#myModal').modal('show');
             //TODO 单拿出来放一个取消按钮
-            if($(this).hasClass("info")){
-                //如果点击的是info类，则删除info类并清空
-                //$(this).removeClass("info").empty();
-                if(POST_DATA.DEL[room_id]){
-                    // 在数据中已经存有会议室信息，将新单元格time_id添加进数组
-                    POST_DATA.DEL[room_id].push(time_id);
-                }
-                else{
-                    // 在数据中没有存过对应会议室记录，直接将time_id对其赋值创建一个字典
-                    POST_DATA.DEL[room_id]=[time_id,];
-                }
+            if($(this).hasClass("myready")){//我的待审批
+                console.log("disapear");
+                $('#used').attr("style","display:none");
+                $('#touse').attr("style","display:block");
+                $('#btns').attr("style","display:block");
             }
-            //取消临时预定
-            else if($(this).hasClass("td_active")){
-                $(this).removeClass("td_active");
-                //去掉被选中的标签
-                var index=$.inArray(time_id,POST_DATA.ADD[room_id]);
-                //在POST数据中删除
-                POST_DATA.ADD[room_id].splice(index,1);
+            else if($(this).hasClass("mypass") || $(this).hasClass("otherpass")){//已通过审批
+                $('#used').attr("style","display:block");
+                $('#touse').attr("style","display:none");
+                $('#btns').attr("style","display:none");
             }
-            //增加新预定
-            else{
-                $(this).addClass("td_active");
-                if(POST_DATA.ADD[room_id]){
-                    POST_DATA.ADD[room_id].push(time_id);
-                }
-                else{
-                    POST_DATA.ADD[room_id]=[time_id,];
-                }
+            else{//可以提出预约申请的空格
+                $('#used').attr("style","display:none");
+                $('#touse').attr("style","display:block");
+                $('#btns').attr("style","display:block");
             }
         });
     };
@@ -135,7 +192,11 @@
 
     //ajax与后端通信
     $(".book_btn").click(function(){
-        console.log("click");
+        POST_DATA.coursename=$("#coursename").val();
+        POST_DATA.teacher=$("#teacher").val();
+        POST_DATA.printel=$("#printel").val();
+        POST_DATA.booktel=$("#booktel").val();
+        console.log(POST_DATA);
         $.ajax({
             url:"/roomorder/book/",
             type:"post",
@@ -154,6 +215,7 @@
                     location.href="";
                 }else{
                     alert("该时间已被预定");
+                    console.log(data.msg)
                     location.href="";
                 }
             },

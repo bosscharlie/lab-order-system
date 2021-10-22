@@ -6,12 +6,12 @@ from django.contrib.auth.models import AbstractUser
 
 
 class UserInfo(AbstractUser):
-    # coursename=models.CharField(max_length=32,verbose_name="课程名称")
-    # printel=models.CharField(max_length=32,verbose_name="负责人及联系电话")
-    # bookertel=models.CharField(max_length=32,verbose_name="预约人及电话")
-    # adminer=models.CharField(max_length=32,verbose_name="实验室审批人")
-    # tel = models.CharField(max_length=32, verbose_name="联系电话")
-    pass
+    coursename=models.CharField(max_length=32,verbose_name="课程名称")
+    teacher=models.CharField(max_length=32,verbose_name="负责老师")
+    printel=models.CharField(max_length=32,verbose_name="负责人及联系电话")
+    bookertel=models.CharField(max_length=32,verbose_name="预约人及电话",default='')
+    adminer=models.CharField(max_length=32,verbose_name="实验室审批人",default="尚未通过审批")
+    # pass
 
 
 class Room(models.Model):
@@ -31,6 +31,10 @@ class Book(models.Model):
     user = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     date = models.DateField()
+    status_choice=(
+        (1,"待审批"),
+        (2,"审批通过"),
+    )
     time_choice = (
         (1, "8:00~9:35"),
         (2, "9:50~12:05"),
@@ -39,7 +43,7 @@ class Book(models.Model):
         (5, "15:20~17:55"),
         (6, "18:00~19:20"),
     )
-
+    status=models.IntegerField(choices=status_choice,default=1)
     time_id = models.IntegerField(choices=time_choice)
 
     def __str__(self):
@@ -48,6 +52,6 @@ class Book(models.Model):
     class Meta:
         verbose_name = "预定信息"
         verbose_name_plural = verbose_name
-        unique_together = (
-            ("room", "date", "time_id"),
-        )
+        # unique_together = (
+        #     ("room", "date", "time_id"),
+        # )
