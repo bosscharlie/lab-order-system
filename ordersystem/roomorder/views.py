@@ -65,7 +65,6 @@ def index(request):
 
 def book(request):
     if request.method == "POST":
-        print(request.POST)
         choose_date=request.POST.get("choose_date")
         #获取会议室时间段列表
         time_choice=models.Book.time_choice
@@ -84,9 +83,13 @@ def book(request):
             teacher=post_data["teacher"]
             printel=post_data["printel"]
             bookertel=post_data["bookertel"]
+            if request.POST.get("batch"):
             #添加新的预定信息
-            models.Book.objects.create(user=user, room_id=room_id, time_id=time_id, date=choose_date,coursename=coursename,
-                                       teacher=teacher,printel=printel,bookertel=bookertel)
+                models.Book.objects.create(user=user, room_id=room_id, time_id=time_id, date=choose_date,coursename=coursename,
+                                           teacher=teacher,printel=printel,batch=True)
+            else:
+                models.Book.objects.create(user=user, room_id=room_id, time_id=time_id, date=choose_date,coursename=coursename,
+                                           teacher=teacher, printel=printel)
             #删除旧预定信息
             # from django.db.models import Q
             # remove_book=Q()
@@ -138,6 +141,22 @@ def reg(request):
     form_obj = forms.RegForm()
     print(form_obj.fields)
     return render(request,'reg.html',{"form_obj": form_obj})
+
+def detail(request):
+    if request.method=="POST":
+        user=request.user
+        choose_date=request.POST.get("choose_date")
+        post_data = json.loads(request.POST.get("post_data"))
+        room_id=post_data["room_id"]
+        time_id=post_data["time_id"]
+        #获取详情信息
+        destination=models.Book.objects.filter(date=choose_date,time_id=time_id)[0]
+        if destination:
+            print(destination.coursename)
+    # 给前端返回详情信息
+    res={"status":1,"msg":"","coursename":destination.coursename,"teacher":destination.teacher,
+         "printel":destination.printel,"adminer":destination.adminer}
+    return HttpResponse(json.dumps(res))
 
 def acc_logout(request):
     logout(request)

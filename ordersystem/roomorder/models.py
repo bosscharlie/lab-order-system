@@ -6,11 +6,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class UserInfo(AbstractUser):
-    coursename=models.CharField(max_length=32,verbose_name="课程名称")
-    teacher=models.CharField(max_length=32,verbose_name="负责老师")
-    printel=models.CharField(max_length=32,verbose_name="负责人及联系电话")
-    bookertel=models.CharField(max_length=32,verbose_name="预约人及电话",default='')
-    adminer=models.CharField(max_length=32,verbose_name="实验室审批人",default="尚未通过审批")
+    tel=models.CharField(max_length=32,verbose_name="预约人及电话",default='')
     # pass
 
 
@@ -30,7 +26,12 @@ class Book(models.Model):
     """预定信息"""
     user = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    date = models.DateField()
+    date = models.DateField(verbose_name="借用日期")
+    coursename = models.CharField(max_length=32, verbose_name="课程名称",default='')
+    teacher = models.CharField(max_length=32, verbose_name="负责老师",default='')
+    printel = models.CharField(max_length=32, verbose_name="负责人及联系电话",default='')
+    adminer = models.CharField(max_length=32, verbose_name="实验室审批人", default="尚未通过审批")
+    batch = models.BooleanField(default=False)
     status_choice=(
         (1,"待审批"),
         (2,"审批通过"),
@@ -44,7 +45,7 @@ class Book(models.Model):
         (6, "18:00~19:20"),
     )
     status=models.IntegerField(choices=status_choice,default=1)
-    time_id = models.IntegerField(choices=time_choice)
+    time_id = models.IntegerField(choices=time_choice,verbose_name="时间段")
 
     def __str__(self):
         return str(self.user) + "预定了" + str(self.room)

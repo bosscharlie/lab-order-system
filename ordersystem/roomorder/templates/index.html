@@ -151,6 +151,13 @@
         "printel":'',
         "bookertel":'',
         "adminer":'',
+        "batch::'',
+    }
+    if(location.search.slice(11)){
+        CHOOSE_DATE=location.search.slice(11)
+    }
+    else{
+        CHOOSE_DATE=new Date().myMet('yyyy-MM-dd');
     }
     function TdClick(){
         //td绑定事件,单击一个单元格触发的事件
@@ -167,8 +174,50 @@
                 $('#used').attr("style","display:none");
                 $('#touse').attr("style","display:block");
                 $('#btns').attr("style","display:block");
+                $.ajax({
+                    url:"/roomorder/detail/",
+                    type:"post",
+                    data:{
+                        choose_date:CHOOSE_DATE,
+                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                        post_data:JSON.stringify({"room_id":room_id,"time_id":time_id,}),
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if(data.status==1){
+                            $("#coursename").text(data.coursename);
+                            $("#teacher").text(data.teacher);
+                            $("#printel").text(data.printel);
+                            $("#adminer").text(data.adminer);
+                        }else{
+                            alert("信息获取失败");
+                            location.href="";
+                        }
+                    },
+                });
             }
             else if($(this).hasClass("mypass") || $(this).hasClass("otherpass")){//已通过审批
+                $.ajax({
+                    url:"/roomorder/detail/",
+                    type:"post",
+                    data:{
+                        choose_date:CHOOSE_DATE,
+                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                        post_data:JSON.stringify({"room_id":room_id,"time_id":time_id,}),
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if(data.status==1){
+                            $("#coursenamet").text(data.coursename);
+                            $("#teachert").text(data.teacher);
+                            $("#printelt").text(data.printel);
+                            $("#adminert").text(data.adminer);
+                        }else{
+                            alert("信息获取失败");
+                            location.href="";
+                        }
+                    },
+                });
                 $('#used').attr("style","display:block");
                 $('#touse').attr("style","display:none");
                 $('#btns').attr("style","display:none");
@@ -183,12 +232,7 @@
     TdClick();
 
     //日期
-    if(location.search.slice(11)){
-        CHOOSE_DATE=location.search.slice(11)
-    }
-    else{
-        CHOOSE_DATE=new Date().myMet('yyyy-MM-dd');
-    }
+
 
     //ajax与后端通信
     $(".book_btn").click(function(){
@@ -207,6 +251,7 @@
             },
             dataType:"json",
             success:function(data){
+
                 if(data.status==1){
                     alert("预定成功");
                     location.href="";
@@ -218,6 +263,26 @@
                     console.log(data.msg)
                     location.href="";
                 }
+            },
+        });
+    });
+    $(".some_btn").clicke(function(){
+       POST_DATA.coursename=$("#coursename").val();
+        POST_DATA.teacher=$("#teacher").val();
+        POST_DATA.printel=$("#printel").val();
+        POST_DATA.booktel=$("#booktel").val();
+        $.ajax({
+            url:"roomorder/book/",
+            type:"post",
+            data:{
+                choose_date:CHOOSE_DATE,
+                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                post_data:JSON.stringify(POST_DATA),
+                batch:"yes",
+            }
+            dataType:"json",
+            success:function(data){
+
             },
         });
     });
