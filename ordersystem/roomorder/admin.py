@@ -13,8 +13,8 @@ class RoomConfig(admin.ModelAdmin):
 
 
 class BookConfig(admin.ModelAdmin):
-    list_display = ('user', 'room', 'date', 'time_id')
-    list_filter = ('user', 'room', 'date', 'time_id')
+    list_display = ('user', 'room', 'date', 'time_id','coursename','teacher','printel','adminer')
+    list_filter = ('user', 'status','room', 'date', 'time_id')
     search_fields = ('user', 'room', 'date', 'time_id')
 
 

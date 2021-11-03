@@ -13,9 +13,11 @@ urlpatterns = [
     path('login/', views.acc_login),
     #处理预定请求
     path('book/',views.book),
-    # #登出
-    # path('logout/',views.acc_logout),
-    #注册界面
+    #预约详情信息
+    path('detail/',views.detail),
+    #登出
+    path('logout/',views.acc_logout),
+    # 注册界面
     path('reg/',views.reg),
     path('check_username_exist/',views.check_username_exist)
 ]
