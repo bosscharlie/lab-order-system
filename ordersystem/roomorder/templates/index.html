@@ -21,10 +21,6 @@
     <h1 class="text-center">欢迎来到会议室预定系统<small class="text-info">{{request.user.username}}</small></h1>
 </div>
 
-<!--<div class="text-center">-->
-<!--    <span>当前用户：</span>-->
-<!--    <span>其他用户：</span>-->
-<!--</div>-->
 <br>
 <br>
 <p class="text-center">
@@ -151,7 +147,7 @@
         "printel":'',
         "bookertel":'',
         "adminer":'',
-        "batch::'',
+        "batch":'',
     }
     if(location.search.slice(11)){
         CHOOSE_DATE=location.search.slice(11)
@@ -266,7 +262,7 @@
             },
         });
     });
-    $(".some_btn").clicke(function(){
+    $(".some_btn").click(function(){
        POST_DATA.coursename=$("#coursename").val();
         POST_DATA.teacher=$("#teacher").val();
         POST_DATA.printel=$("#printel").val();
@@ -279,7 +275,7 @@
                 csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
                 post_data:JSON.stringify(POST_DATA),
                 batch:"yes",
-            }
+            },
             dataType:"json",
             success:function(data){
 
