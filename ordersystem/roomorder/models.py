@@ -53,6 +53,6 @@ class Book(models.Model):
     class Meta:
         verbose_name = "预定信息"
         verbose_name_plural = verbose_name
-        # unique_together = (
-        #     ("room", "date", "time_id"),
-        # )
+        unique_together = (
+            ("user","room", "date", "time_id"),
+        )

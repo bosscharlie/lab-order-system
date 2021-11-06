@@ -83,13 +83,22 @@ def book(request):
             teacher=post_data["teacher"]
             printel=post_data["printel"]
             bookertel=post_data["bookertel"]
-            if request.POST.get("batch"):
-            #添加新的预定信息
-                models.Book.objects.create(user=user, room_id=room_id, time_id=time_id, date=choose_date,coursename=coursename,
-                                           teacher=teacher,printel=printel,batch=True)
+            exist=models.Book.objects.filter(user=user,room_id=room_id,time_id=time_id,date=choose_date)
+            if exist:
+                exist[0].coursename=coursename
+                exist[0].teacher=teacher
+                exist[0].printel=printel
+                if request.POST.get("batch"):
+                    exist[0].batch=True
+                exist[0].save()
             else:
-                models.Book.objects.create(user=user, room_id=room_id, time_id=time_id, date=choose_date,coursename=coursename,
-                                           teacher=teacher, printel=printel)
+                if request.POST.get("batch"):
+                #添加新的预定信息
+                    models.Book.objects.create(user=user, room_id=room_id, time_id=time_id, date=choose_date,coursename=coursename,
+                                            teacher=teacher,printel=printel,batch=True)
+                else:
+                    models.Book.objects.create(user=user, room_id=room_id, time_id=time_id, date=choose_date,coursename=coursename,
+                                            teacher=teacher, printel=printel)
             #删除旧预定信息
             # from django.db.models import Q
             # remove_book=Q()
