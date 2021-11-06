@@ -166,10 +166,6 @@
             $('#myModal').modal('show');
             //TODO 单拿出来放一个取消按钮
             if($(this).hasClass("myready")){//我的待审批
-                console.log("disapear");
-                $('#used').attr("style","display:none");
-                $('#touse').attr("style","display:block");
-                $('#btns').attr("style","display:block");
                 $.ajax({
                     url:"/roomorder/detail/",
                     type:"post",
@@ -181,16 +177,20 @@
                     dataType:"json",
                     success:function(data){
                         if(data.status==1){
-                            $("#coursename").text(data.coursename);
-                            $("#teacher").text(data.teacher);
-                            $("#printel").text(data.printel);
-                            $("#adminer").text(data.adminer);
+                            console.log(data);
+                            document.getElementById('coursename').value=data.coursename;
+                            document.getElementById('teacher').value=data.teacher;
+                            document.getElementById('printel').value=data.printel;
+                            document.getElementById('adminer').value=data.adminer;
                         }else{
                             alert("信息获取失败");
                             location.href="";
                         }
                     },
                 });
+                $('#used').attr("style","display:none");
+                $('#touse').attr("style","display:block");
+                $('#btns').attr("style","display:block");
             }
             else if($(this).hasClass("mypass") || $(this).hasClass("otherpass")){//已通过审批
                 $.ajax({
@@ -263,7 +263,7 @@
         });
     });
     $(".some_btn").click(function(){
-       POST_DATA.coursename=$("#coursename").val();
+        POST_DATA.coursename=$("#coursename").val();
         POST_DATA.teacher=$("#teacher").val();
         POST_DATA.printel=$("#printel").val();
         POST_DATA.booktel=$("#booktel").val();

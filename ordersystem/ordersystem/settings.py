@@ -72,10 +72,20 @@ WSGI_APPLICATION = 'ordersystem.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+DATABASES={
+    'default':{
+        'ENGINE':'django.db.backends.mysql',
+        'NAME':'django_mysql',
+        'USER':'root',
+        'PASSWORD':'liuziang123',
+        'HOST':'127.0.0.1',
+        'POST':8000,
     }
 }
 

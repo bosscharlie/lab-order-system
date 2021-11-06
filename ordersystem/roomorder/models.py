@@ -12,7 +12,7 @@ class UserInfo(AbstractUser):
 
 class Room(models.Model):
     caption = models.CharField(max_length=32, verbose_name="会议室名称")
-    capacity = models.IntegerField(verbose_name="可容纳人数")
+    capacity = models.IntegerField(verbose_name="可容纳人数",default=20)
 
     def __str__(self):
         return self.caption
