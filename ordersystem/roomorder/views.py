@@ -39,7 +39,7 @@ def index(request):
     book_list=models.Book.objects.filter(date=book_date)
     htmls=''
     for room in room_list:
-        htmls+='<tr><td id="room{}">{}({})</td>'.format(room.id,room.caption,room.capacity)
+        htmls+='<tr><td id="room{}" class="room">{}({})</td>'.format(room.id,room.caption,room.capacity)
         for time in time_choice:
             #判断单元格是否已经被预定
             flag=False
