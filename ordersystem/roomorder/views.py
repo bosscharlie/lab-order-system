@@ -30,8 +30,10 @@ def acc_login(request):
 #@login_required(login_url="/login/")
 def index(request):
     date=datetime.datetime.now().date()
+    date=datetime.datetime.strftime(date,"%Y-%m-%d")
     #没有指定日期default当天日期
     book_date=request.GET.get("book_date",date)
+    book_date=datetime.datetime.strptime(book_date,"%Y-%m-%d").date()
     #获取会议室时间段列表
     time_choice=models.Book.time_choice
     #获取会议室列表
@@ -54,7 +56,9 @@ def index(request):
                     coursename=book.coursename
                     break
             for book in batach_list:
-                if book.room.pk==room.pk and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
+                print(book_date)
+                print(book.date)
+                if  (book_date-book.date).days%7==0 and book.room.pk==room.pk and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
                     flag=True
                     status=book.status
                     coursename=book.coursename
@@ -169,12 +173,19 @@ def detail(request):
         room_id=post_data["room_id"]
         time_id=post_data["time_id"]
         #获取详情信息
-        destination=models.Book.objects.filter(date=choose_date,time_id=time_id)[0]
+        # print(choose_date)
+        # print(time_id)
+        # print(models.Book.objects.all())
+        destination=models.Book.objects.filter(date=choose_date,time_id=time_id,room_id=room_id)
+        # print(destination[0].date)
         if destination:
-            print(destination.coursename)
+            print(destination[0].coursename)
+            destination=destination[0]
     # 给前端返回详情信息
-    res={"status":1,"msg":"","coursename":destination.coursename,"teacher":destination.teacher,
-         "printel":destination.printel,"adminer":destination.adminer}
+            res={"status":1,"msg":"","coursename":destination.coursename,"teacher":destination.teacher,
+                "printel":destination.printel,"adminer":destination.adminer}
+        else:
+            res={"status":0,"msg":"",}
     return HttpResponse(json.dumps(res))
 
 def acc_logout(request):
@@ -212,11 +223,32 @@ def room(request,roomid,choose_date):
     room=models.Room.objects.get(id=roomid)
     week=("星期一","星期二","星期三","星期四","星期五","星期六","星期日")
     week_index=0
+    book_list=models.Book.objects.filter(room_id=roomid)
     while day<=week_end:
         # print(day)
         htmls+='<tr><td>{}({})</td>'.format(week[week_index],day.strftime("%m-%d"))
         for time in time_choice:
-            htmls+='<td></td>'
+             #判断单元格是否已经被预定
+            flag=False
+            status=0
+            coursename=''
+            for book in book_list:
+                if (book.date==day or book.batch) and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
+                    flag=True
+                    status=book.status
+                    coursename=book.coursename
+                    break
+            if flag:
+                #判断登陆人与预定人是否一致
+                if request.user.username==book.user.username:
+                    if status==1:#待审批
+                        htmls+='<td class="myready danger item" room_id={} time_id={}>{}，待审批</td>'.format(room.pk,time[0],coursename)
+                    elif status==2:#通过审批
+                        htmls += '<td class="mypass info item" room_id={} time_id={}>{}</td>'.format(room.pk, time[0],coursename)
+                else:
+                    htmls+='<td class="otherpass success item" room_id={} time_id={}>{}</td>'.format(room.pk,time[0],coursename)
+            else:
+                htmls+='<td class="item" room_id={} time_id={}></td>'.format(room.pk,time[0])
         htmls+='</tr>'
         week_index+=1
         day=day+datetime.timedelta(days=1)

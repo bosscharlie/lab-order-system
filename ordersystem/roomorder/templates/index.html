@@ -231,6 +231,52 @@
                     $('#btns').attr("style", "display:block");
                 }
             });
+            // }).mouseover(function(e) {
+            //     var room_id = $(this).attr("room_id");
+            //     var time_id = $(this).attr("time_id");
+            //     console.log(room_id)
+            //     console.log(time_id)
+            //     $.ajax({
+            //         url: "/roomorder/detail/",
+            //         type: "post",
+            //         data: {
+            //             choose_date: CHOOSE_DATE,
+            //             csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+            //             post_data: JSON.stringify({
+            //                 "room_id": room_id,
+            //                 "time_id": time_id,
+            //             }),
+            //         },
+            //         dataType: "json",
+            //         success: function(data) {
+            //             if (data.status == 1) {
+            //                 $("body").append(
+            //                     "<div id='div_toop' class='bg-success'>" +
+            //                     "<div>课程：" + data.coursename + "</div>" +
+            //                     "<div>负责教：" + data.printel + "</div>" +
+            //                     "</div>");
+            //                 $("#div_toop")
+            //                     .css({
+            //                         "top": (e.pageY + 10) + "px",
+            //                         "position": "absolute",
+            //                         "left": (e.pageX + 20) + "px"
+            //                     }).show("fast");
+            //             } else {
+            //                 // alert("信息获取失败");
+            //                 location.href = "";
+            //             }
+            //         },
+            //     });
+            // }).mouseout(function() {
+            //     $("#div_toop").remove();
+            // }).mousemove(function(e) {
+            //     $("#div_toop")
+            //         .css({
+            //             "top": (e.pageY + 10) + "px",
+            //             "position": "absolute",
+            //             "left": (e.pageX + 20) + "px"
+            //         });
+            // });
         };
         TdClick();
 
