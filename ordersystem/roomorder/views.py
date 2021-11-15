@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.shortcuts import render,redirect, HttpResponse
+from django.shortcuts import render,HttpResponseRedirect
+from django.shortcuts import redirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -39,25 +39,27 @@ def index(request):
     book_list=models.Book.objects.filter(date=book_date)
     htmls=''
     for room in room_list:
-        htmls+='<tr><td id="room{}" class="room">{}({})</td>'.format(room.id,room.caption,room.capacity)
+        htmls+='<tr><td id="room{}" room_id={} class="room">{}({})</td>'.format(room.id,room.pk,room.caption,room.capacity)
         for time in time_choice:
             #判断单元格是否已经被预定
             flag=False
             status=0
+            coursename=''
             for book in book_list:
                 if book.room.pk==room.pk and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
                     flag=True
                     status=book.status
+                    coursename=book.coursename
                     break
             if flag:
                 #判断登陆人与预定人是否一致
                 if request.user.username==book.user.username:
                     if status==1:#待审批
-                        htmls+='<td class="myready danger item" room_id={} time_id={}>已申请，待审批</td>'.format(room.pk,time[0])
+                        htmls+='<td class="myready danger item" room_id={} time_id={}>{}，待审批</td>'.format(room.pk,time[0],coursename)
                     elif status==2:#通过审批
-                        htmls += '<td class="mypass info item" room_id={} time_id={}>已占用</td>'.format(room.pk, time[0])
+                        htmls += '<td class="mypass info item" room_id={} time_id={}>{}</td>'.format(room.pk, time[0],coursename)
                 else:
-                    htmls+='<td class="otherpass success item" room_id={} time_id={}>已占用</td>'.format(room.pk,time[0])
+                    htmls+='<td class="otherpass success item" room_id={} time_id={}>{}</td>'.format(room.pk,time[0],coursename)
             else:
                 htmls+='<td class="item" room_id={} time_id={}></td>'.format(room.pk,time[0])
         htmls+="</tr>"
@@ -178,6 +180,36 @@ def check_username_exist(request):
     if models.UserInfo.objects.filter(username=username):
         res = {"status": 1, "msg": ""}
     return HttpResponse(json.dumps(res))
-#
-# def home(request):
-#
+
+def roomdetail(request):
+    res={"status":1,"msg":"/roomorder/room/"}
+    if request.method=="POST":
+        user=request.user
+        choose_date=request.POST.get("choose_date")
+        # choose_date=datetime.datetime.strptime(choose_date,"%Y-%m-%d")
+        room_id = json.loads(request.POST.get("room_id"))
+        res["msg"]+=str(room_id)+"/"+str(choose_date)
+        res["status"]=0
+    return HttpResponse(json.dumps(res))
+
+def room(request,roomid,choose_date):
+    choose_date=datetime.datetime.strptime(choose_date,"%Y-%m-%d")
+    user=request.user
+    day_num=choose_date.isoweekday()
+    week_start=((choose_date-datetime.timedelta(days=day_num))+datetime.timedelta(days=1)).date()
+    week_end=((choose_date-datetime.timedelta(days=day_num))+datetime.timedelta(days=7)).date()
+    day=week_start
+    time_choice=models.Book.time_choice
+    htmls=''
+    room=models.Room.objects.get(id=roomid)
+    week=("星期一","星期二","星期三","星期四","星期五","星期六","星期日")
+    week_index=0
+    while day<=week_end:
+        # print(day)
+        htmls+='<tr><td>{}({})</td>'.format(week[week_index],day.strftime("%m-%d"))
+        for time in time_choice:
+            htmls+='<td></td>'
+        htmls+='</tr>'
+        week_index+=1
+        day=day+datetime.timedelta(days=1)
+    return render(request,'roomdetail.html',{"time_choice":time_choice,"name":room.caption,"htmls":htmls,})

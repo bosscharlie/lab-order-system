@@ -1,339 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>index</title>
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/static/jquery.datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/jquery.datetimepicker.min.css" />
     <style>
-        .td_active{
-            background-color:purple;
+        .td_active {
+            background-color: purple;
         }
-
-        #my_div{
-            top:215px!important;
+        
+        #my_div {
+            top: 215px!important;
         }
-
     </style>
 </head>
-<body>
-<div class="page-header">
-    <h1 class="text-center">欢迎来到会议室预定系统<small class="text-info">{{request.user.username}}</small></h1>
-</div>
 
-<br>
-<br>
-<p class="text-center">
-    <span><a href="/roomorder/login/">返回首页</a> </span>
-    <span><a href="/roomorder/logout/">退出登陆</a> </span>
-</p>
-<div class="calender pull-right">
-    <div class="input-group" style="width: 230px;">
-        <span class="text-warning">注意：当前日期高亮显示</span>
-        <input type="text" autocomplete="off" class="form-control" id="datetimepicker11" placeholder="请选择日期"/>
-        <span class="input-group-addon">
+<body>
+    <div class="page-header">
+        <h1 class="text-center">实验室课表<small class="text-info">{{request.user.username}}</small></h1>
+    </div>
+
+    <br>
+    <br>
+    <p class="text-center">
+        <span><a href="/roomorder/login/">返回首页</a> </span>
+        <span><a href="/roomorder/logout/">退出登陆</a> </span>
+    </p>
+    <div class="calender pull-right">
+        <div class="input-group" style="width: 230px;">
+            <span class="text-warning">注意：当前日期高亮显示</span>
+            <input type="text" autocomplete="off" class="form-control" id="datetimepicker11" placeholder="请选择日期" />
+            <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar">
             </span>
-        </span>
+            </span>
+        </div>
     </div>
-</div>
-<br>
-<br>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>会议室（可容纳人数）/时间</th>
-            {% for row in time_choice %}
-            <th id="time{{row.0}}">{{ row.1 }}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {{ htmls|safe }}
-    </tbody>
-</table>
-<div>{% csrf_token %}</div>
-<!--<div class="col-lg-offset-6">-->
-<!--    <button class="btn btn-info book_btn">预定</button>-->
-<!--</div>-->
-<!--模态框展示详情信息-->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-						aria-hidden="true">×
+    <br>
+    <br>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>会议室（可容纳人数）/时间</th>
+                {% for row in time_choice %}
+                <th id="time{{row.0}}">{{ row.1 }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {{ htmls|safe }}
+        </tbody>
+    </table>
+    <div>{% csrf_token %}</div>
+    <!--<div class="col-lg-offset-6">-->
+    <!--    <button class="btn btn-info book_btn">预定</button>-->
+    <!--</div>-->
+    <!--模态框展示详情信息-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
 				</button>
-				<h4 class="modal-title" id="myModalLabel">
-				</h4>
-			</div>
-			<div class="modal-body">
-                <table class="table table" id="used">
-                    <thead>
-                        <tr>
-                            <th>预约详情</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>课程名：<span id="coursenamet"></span></th>
-                        </tr>
-                        <tr>
-                            <th>负责老师：<span id="teachert"></span></th>
-                        </tr>
-                        <tr>
-                            <th>联系人及电话：<span id="printelt"></span></th>
-                        </tr>
-                        <tr>
-                            <th>预约人及电话：{{request.user.username}}</th>
-                        </tr>
-                        <tr>
-                            <th>实验室审批人：<span id="adminert"></span></th>
-                        </tr>
-                        <tr>
-                            <th>使用照片：</th>
-                        </tr>
-                    </tbody>
-                </table>
-				<form class="form-group" id="touse">
-                    <label>课程名</label>
-                    <input type="text" class="form-control" id="coursename">
-                    <label>负责老师</label>
-                    <input type="text" class="form-control" id="teacher">
-                    <label>联系人及电话</label>
-                    <input type="text" class="form-control" id="printel">
-                    <label>预约人及电话：</label>
-                    <input type="text" class="form-control" id="bookertel" placeholder={{request.user.username}} disabled>
-                    <label>实验室审批人：</label>
-                    <input type="text" class="form-control" id="adminer" disabled>
-                    <label>使用照片：</label>
-                    <input type="text" class="form-control" >
-                </form>
-			</div>
-			<div class="modal-footer" id="btns">
-                <button class="btn btn-info book_btn">预定</button>
-                <button class="btn btn-info some_btn">批量预定</button>
-                <button class="btn btn-info del_btn">删除预定</button>
-			</div>
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+                    <h4 class="modal-title" id="myModalLabel">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table" id="used">
+                        <thead>
+                            <tr>
+                                <th>预约详情</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>课程名：<span id="coursenamet"></span></th>
+                            </tr>
+                            <tr>
+                                <th>负责老师：<span id="teachert"></span></th>
+                            </tr>
+                            <tr>
+                                <th>联系人及电话：<span id="printelt"></span></th>
+                            </tr>
+                            <tr>
+                                <th>预约人及电话：{{request.user.username}}</th>
+                            </tr>
+                            <tr>
+                                <th>实验室审批人：<span id="adminert"></span></th>
+                            </tr>
+                            <tr>
+                                <th>使用照片：</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <form class="form-group" id="touse">
+                        <label>课程名</label>
+                        <input type="text" class="form-control" id="coursename">
+                        <label>负责老师</label>
+                        <input type="text" class="form-control" id="teacher">
+                        <label>联系人及电话</label>
+                        <input type="text" class="form-control" id="printel">
+                        <label>预约人及电话：</label>
+                        <input type="text" class="form-control" id="bookertel" placeholder={{request.user.username}} disabled>
+                        <label>实验室审批人：</label>
+                        <input type="text" class="form-control" id="adminer" disabled>
+                        <label>使用照片：</label>
+                        <input type="text" class="form-control">
+                    </form>
+                </div>
+                <div class="modal-footer" id="btns">
+                    <button class="btn btn-info book_btn">预定</button>
+                    <button class="btn btn-info some_btn">批量预定</button>
+                    <button class="btn btn-info del_btn">删除预定</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 
-<script src="/static/js/jquery-3.6.0.min.js"></script>
-<script src="/static/bootstrap/js/bootstrap.min.js"></script>
-<script src="/static/jquery.datetimepicker.full.min.js"></script>
-<script>
-    Date.prototype.myMet=function(fmt){
-        var o={
-            "M+":this.getMonth()+1,
-            "d+":this.getDate(),
-            "h+":this.getHours(),
-            "m+":this.getMinutes(),
-            "s+":this.getSeconds(),
-            "q+":Math.floor((this.getMonth()+3)/3),
-            "S":this.getMilliseconds()
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/jquery.datetimepicker.full.min.js"></script>
+    <script>
+        Date.prototype.myMet = function(fmt) {
+            var o = {
+                "M+": this.getMonth() + 1,
+                "d+": this.getDate(),
+                "h+": this.getHours(),
+                "m+": this.getMinutes(),
+                "s+": this.getSeconds(),
+                "q+": Math.floor((this.getMonth() + 3) / 3),
+                "S": this.getMilliseconds()
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
         };
-        if(/(y+)/.test(fmt)) fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length));
-        for (var k in o)
-            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    };
-    TODAY_DATE=new Date().myMet("yyyy-MM-dd");
-    var POST_DATA={
-        "room_id":'',
-        "time_id":'',
-        "coursename":'',
-        "teacher":'',
-        "printel":'',
-        "bookertel":'',
-        "adminer":'',
-        "batch":'',
-    }
-    if(location.search.slice(11)){
-        CHOOSE_DATE=location.search.slice(11)
-    }
-    else{
-        CHOOSE_DATE=new Date().myMet('yyyy-MM-dd');
-    }
-    function TdClick(){
-        //td绑定事件,单击一个单元格触发的事件
-        $(".item").click(function(){
-            POST_DATA.room_id=$(this).attr("room_id");
-            POST_DATA.time_id=$(this).attr("time_id");
-            var room_id=$(this).attr("room_id");
-            var time_id=$(this).attr("time_id");
-            $('#myModalLabel').text("实验室："+$('#room'+POST_DATA.room_id).text()+"    时间段："+$('#time'+POST_DATA.time_id).text());
-            $('#myModal').modal('show');
-            //TODO 单拿出来放一个取消按钮
-            if($(this).hasClass("myready")){//我的待审批
-                $.ajax({
-                    url:"/roomorder/detail/",
-                    type:"post",
-                    data:{
-                        choose_date:CHOOSE_DATE,
-                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
-                        post_data:JSON.stringify({"room_id":room_id,"time_id":time_id,}),
-                    },
-                    dataType:"json",
-                    success:function(data){
-                        if(data.status==1){
-                            console.log(data);
-                            document.getElementById('coursename').value=data.coursename;
-                            document.getElementById('teacher').value=data.teacher;
-                            document.getElementById('printel').value=data.printel;
-                            document.getElementById('adminer').value=data.adminer;
-                        }else{
-                            alert("信息获取失败");
-                            location.href="";
-                        }
-                    },
-                });
-                $('#used').attr("style","display:none");
-                $('#touse').attr("style","display:block");
-                $('#btns').attr("style","display:block");
-            }
-            else if($(this).hasClass("mypass") || $(this).hasClass("otherpass")){//已通过审批
-                $.ajax({
-                    url:"/roomorder/detail/",
-                    type:"post",
-                    data:{
-                        choose_date:CHOOSE_DATE,
-                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
-                        post_data:JSON.stringify({"room_id":room_id,"time_id":time_id,}),
-                    },
-                    dataType:"json",
-                    success:function(data){
-                        if(data.status==1){
-                            $("#coursenamet").text(data.coursename);
-                            $("#teachert").text(data.teacher);
-                            $("#printelt").text(data.printel);
-                            $("#adminert").text(data.adminer);
-                        }else{
-                            alert("信息获取失败");
-                            location.href="";
-                        }
-                    },
-                });
-                $('#used').attr("style","display:block");
-                $('#touse').attr("style","display:none");
-                $('#btns').attr("style","display:none");
-            }
-            else{//可以提出预约申请的空格
-                $('#used').attr("style","display:none");
-                $('#touse').attr("style","display:block");
-                $('#btns').attr("style","display:block");
-            }
-        });
-    };
-    TdClick();
+        TODAY_DATE = new Date().myMet("yyyy-MM-dd");
+        var POST_DATA = {
+            "room_id": '',
+            "time_id": '',
+            "coursename": '',
+            "teacher": '',
+            "printel": '',
+            "bookertel": '',
+            "adminer": '',
+            "batch": '',
+        }
+        if (location.search.slice(11)) {
+            CHOOSE_DATE = location.search.slice(11)
+        } else {
+            CHOOSE_DATE = new Date().myMet('yyyy-MM-dd');
+        }
 
-    //日期
-
-
-    //ajax与后端通信
-    $(".book_btn").click(function(){
-        POST_DATA.coursename=$("#coursename").val();
-        POST_DATA.teacher=$("#teacher").val();
-        POST_DATA.printel=$("#printel").val();
-        POST_DATA.booktel=$("#booktel").val();
-        console.log(POST_DATA);
-        $.ajax({
-            url:"/roomorder/book/",
-            type:"post",
-            data:{
-                choose_date:CHOOSE_DATE,
-                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
-                post_data:JSON.stringify(POST_DATA),
-            },
-            dataType:"json",
-            success:function(data){
-
-                if(data.status==1){
-                    alert("预定成功");
-                    location.href="";
-                }else if(data.status==2){
-                    alert("未修改信息");
-                    location.href="";
-                }else{
-                    alert("该时间已被预定");
-                    console.log(data.msg)
-                    location.href="";
+        function TdClick() {
+            //td绑定事件,单击一个单元格触发的事件
+            $(".item").click(function() {
+                POST_DATA.room_id = $(this).attr("room_id");
+                POST_DATA.time_id = $(this).attr("time_id");
+                var room_id = $(this).attr("room_id");
+                var time_id = $(this).attr("time_id");
+                $('#myModalLabel').text("实验室：" + $('#room' + POST_DATA.room_id).text() + "    时间段：" + $('#time' + POST_DATA.time_id).text());
+                $('#myModal').modal('show');
+                //TODO 单拿出来放一个取消按钮
+                if ($(this).hasClass("myready")) { //我的待审批
+                    $.ajax({
+                        url: "/roomorder/detail/",
+                        type: "post",
+                        data: {
+                            choose_date: CHOOSE_DATE,
+                            csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                            post_data: JSON.stringify({
+                                "room_id": room_id,
+                                "time_id": time_id,
+                            }),
+                        },
+                        dataType: "json",
+                        success: function(data) {
+                            if (data.status == 1) {
+                                console.log(data);
+                                document.getElementById('coursename').value = data.coursename;
+                                document.getElementById('teacher').value = data.teacher;
+                                document.getElementById('printel').value = data.printel;
+                                document.getElementById('adminer').value = data.adminer;
+                            } else {
+                                alert("信息获取失败");
+                                location.href = "";
+                            }
+                        },
+                    });
+                    $('#used').attr("style", "display:none");
+                    $('#touse').attr("style", "display:block");
+                    $('#btns').attr("style", "display:block");
+                } else if ($(this).hasClass("mypass") || $(this).hasClass("otherpass")) { //已通过审批
+                    $.ajax({
+                        url: "/roomorder/detail/",
+                        type: "post",
+                        data: {
+                            choose_date: CHOOSE_DATE,
+                            csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                            post_data: JSON.stringify({
+                                "room_id": room_id,
+                                "time_id": time_id,
+                            }),
+                        },
+                        dataType: "json",
+                        success: function(data) {
+                            if (data.status == 1) {
+                                $("#coursenamet").text(data.coursename);
+                                $("#teachert").text(data.teacher);
+                                $("#printelt").text(data.printel);
+                                $("#adminert").text(data.adminer);
+                            } else {
+                                alert("信息获取失败");
+                                location.href = "";
+                            }
+                        },
+                    });
+                    $('#used').attr("style", "display:block");
+                    $('#touse').attr("style", "display:none");
+                    $('#btns').attr("style", "display:none");
+                } else { //可以提出预约申请的空格
+                    $('#used').attr("style", "display:none");
+                    $('#touse').attr("style", "display:block");
+                    $('#btns').attr("style", "display:block");
                 }
-            },
-        });
-    });
-    $(".some_btn").click(function(){
-        POST_DATA.coursename=$("#coursename").val();
-        POST_DATA.teacher=$("#teacher").val();
-        POST_DATA.printel=$("#printel").val();
-        POST_DATA.booktel=$("#booktel").val();
-        $.ajax({
-            url:"roomorder/book/",
-            type:"post",
-            data:{
-                choose_date:CHOOSE_DATE,
-                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
-                post_data:JSON.stringify(POST_DATA),
-                batch:"yes",
-            },
-            dataType:"json",
-            success:function(data){
+            });
+        };
+        TdClick();
 
-            },
+        //日期
+        $(".room").click(function() {
+            var room_id = $(this).attr("room_id");
+            $.ajax({
+                url: "/roomorder/roomdetail/",
+                type: "post",
+                data: {
+                    choose_date: CHOOSE_DATE,
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                    room_id: room_id,
+                },
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                    if (data.status) {
+                        $(".login-error").text(data.msg);
+                    } else {
+                        location.href = data.msg
+                    }
+                }
+            })
         });
-    });
 
-    //日历插件
-    function book_query(e){
-        CHOOSE_DATE=e.date.myMet("yyyy-MM-dd");
-        console.log(e);
-        location.href="/roomorder/index/?book_date="+CHOOSE_DATE;
-    }
-    //判断输入日期格式是否正确
-    function isDate(data){
-        var filter  = /((^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(10|12|0?[13578])([-\/\._])(3[01]|[12][0-9]|0?[1-9])$)|(^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(11|0?[469])([-\/\._])(30|[12][0-9]|0?[1-9])$)|(^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(0?2)([-\/\._])(2[0-8]|1[0-9]|0?[1-9])$)|(^([2468][048]00)([-\/\._])(0?2)([-\/\._])(29)$)|(^([3579][26]00)([-\/\._])(0?2)([-\/\._])(29)$)|(^([1][89][0][48])([-\/\._])(0?2)([-\/\._])(29)$)|(^([2-9][0-9][0][48])([-\/\._])(0?2)([-\/\._])(29)$)|(^([1][89][2468][048])([-\/\._])(0?2)([-\/\._])(29)$)|(^([2-9][0-9][2468][048])([-\/\._])(0?2)([-\/\._])(29)$)|(^([1][89][13579][26])([-\/\._])(0?2)([-\/\._])(29)$)|(^([2-9][0-9][13579][26])([-\/\._])(0?2)([-\/\._])(29)$))/;
-        if(filter.test(data)){
-            return true;
-        }else{
-            return false;
+        //ajax与后端通信
+        $(".book_btn").click(function() {
+            POST_DATA.coursename = $("#coursename").val();
+            POST_DATA.teacher = $("#teacher").val();
+            POST_DATA.printel = $("#printel").val();
+            POST_DATA.booktel = $("#booktel").val();
+            console.log(POST_DATA);
+            $.ajax({
+                url: "/roomorder/book/",
+                type: "post",
+                data: {
+                    choose_date: CHOOSE_DATE,
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                    post_data: JSON.stringify(POST_DATA),
+                },
+                dataType: "json",
+                success: function(data) {
+
+                    if (data.status == 1) {
+                        alert("预定成功");
+                        location.href = "";
+                    } else if (data.status == 2) {
+                        alert("未修改信息");
+                        location.href = "";
+                    } else {
+                        alert("该时间已被预定");
+                        console.log(data.msg)
+                        location.href = "";
+                    }
+                },
+            });
+        });
+        $(".some_btn").click(function() {
+            POST_DATA.coursename = $("#coursename").val();
+            POST_DATA.teacher = $("#teacher").val();
+            POST_DATA.printel = $("#printel").val();
+            POST_DATA.booktel = $("#booktel").val();
+            $.ajax({
+                url: "roomorder/book/",
+                type: "post",
+                data: {
+                    choose_date: CHOOSE_DATE,
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                    post_data: JSON.stringify(POST_DATA),
+                    batch: "yes",
+                },
+                dataType: "json",
+                success: function(data) {
+
+                },
+            });
+        });
+
+        //日历插件
+        function book_query(e) {
+            CHOOSE_DATE = e.date.myMet("yyyy-MM-dd");
+            console.log(e);
+            location.href = "/roomorder/index/?book_date=" + CHOOSE_DATE;
         }
-    }
-    console.log(isDate(TODAY_DATE));
-    //监听日期改变
-    $("#datetimepicker11").change(function(){
-        var test=$(this).val();
-        if(isDate(test)){
-            if(test<TODAY_DATE){
-                console.log(test);
-                //alert("只能选择未来日期！");
-                CHOOSE_DATE=test;
-                location.href="/roomorder/index/?book_date="+CHOOSE_DATE;
+        //判断输入日期格式是否正确
+        function isDate(data) {
+            var filter = /((^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(10|12|0?[13578])([-\/\._])(3[01]|[12][0-9]|0?[1-9])$)|(^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(11|0?[469])([-\/\._])(30|[12][0-9]|0?[1-9])$)|(^((1[8-9]\d{2})|([2-9]\d{3}))([-\/\._])(0?2)([-\/\._])(2[0-8]|1[0-9]|0?[1-9])$)|(^([2468][048]00)([-\/\._])(0?2)([-\/\._])(29)$)|(^([3579][26]00)([-\/\._])(0?2)([-\/\._])(29)$)|(^([1][89][0][48])([-\/\._])(0?2)([-\/\._])(29)$)|(^([2-9][0-9][0][48])([-\/\._])(0?2)([-\/\._])(29)$)|(^([1][89][2468][048])([-\/\._])(0?2)([-\/\._])(29)$)|(^([2-9][0-9][2468][048])([-\/\._])(0?2)([-\/\._])(29)$)|(^([1][89][13579][26])([-\/\._])(0?2)([-\/\._])(29)$)|(^([2-9][0-9][13579][26])([-\/\._])(0?2)([-\/\._])(29)$))/;
+            if (filter.test(data)) {
+                return true;
+            } else {
+                return false;
             }
-            else{
-                CHOOSE_DATE=test;
-                location.href="/roomorder/index/?book_date="+CHOOSE_DATE;
-            }
-        }else{
-            alert("日期格式错误！");
-            location.href="";
         }
-    });
-    //日历插件初始化及配置
-    $('#datetimepicker11').datetimepicker({
-        minView:2,
-        startView:2,
-        language:"zh-CN",
-        sideByside:true,
-        //timepicker:false,
-        format:'Y-m-d',
-        startDate:TODAY_DATE,
-        todayBtn:true,
-        todayHighlight:1,
-        enterLikeTab:false,
-        bootcssVer:3,
-        autoclose:true,
-    }).on('change',book_query).val(CHOOSE_DATE).css('font-weight','bold');
-    $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").attr("id","my_div");
-</script>
+        console.log(isDate(TODAY_DATE));
+        //监听日期改变
+        $("#datetimepicker11").change(function() {
+            var test = $(this).val();
+            if (isDate(test)) {
+                if (test < TODAY_DATE) {
+                    console.log(test);
+                    //alert("只能选择未来日期！");
+                    CHOOSE_DATE = test;
+                    location.href = "/roomorder/index/?book_date=" + CHOOSE_DATE;
+                } else {
+                    CHOOSE_DATE = test;
+                    location.href = "/roomorder/index/?book_date=" + CHOOSE_DATE;
+                }
+            } else {
+                alert("日期格式错误！");
+                location.href = "";
+            }
+        });
+        //日历插件初始化及配置
+        $('#datetimepicker11').datetimepicker({
+            minView: 2,
+            startView: 2,
+            language: "zh-CN",
+            sideByside: true,
+            //timepicker:false,
+            format: 'Y-m-d',
+            startDate: TODAY_DATE,
+            todayBtn: true,
+            todayHighlight: 1,
+            enterLikeTab: false,
+            bootcssVer: 3,
+            autoclose: true,
+        }).on('change', book_query).val(CHOOSE_DATE).css('font-weight', 'bold');
+        $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").attr("id", "my_div");
+    </script>
 </body>
+
 </html>
