@@ -1,3 +1,4 @@
+from django.db.models import base
 from django.shortcuts import render,HttpResponseRedirect
 from django.shortcuts import redirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
@@ -37,6 +38,7 @@ def index(request):
     room_list=models.Room.objects.all()
     #获取会议室预定信息
     book_list=models.Book.objects.filter(date=book_date)
+    batach_list=models.Book.objects.filter(batch=True)
     htmls=''
     for room in room_list:
         htmls+='<tr><td id="room{}" room_id={} class="room">{}({})</td>'.format(room.id,room.pk,room.caption,room.capacity)
@@ -46,6 +48,12 @@ def index(request):
             status=0
             coursename=''
             for book in book_list:
+                if book.room.pk==room.pk and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
+                    flag=True
+                    status=book.status
+                    coursename=book.coursename
+                    break
+            for book in batach_list:
                 if book.room.pk==room.pk and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
                     flag=True
                     status=book.status
