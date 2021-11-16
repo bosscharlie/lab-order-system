@@ -56,8 +56,6 @@ def index(request):
                     coursename=book.coursename
                     break
             for book in batach_list:
-                print(book_date)
-                print(book.date)
                 if  (book_date-book.date).days%7==0 and book.room.pk==room.pk and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
                     flag=True
                     status=book.status
@@ -85,7 +83,6 @@ def book(request):
         try:
             #向数据库修改会议室预定记录
             post_data=json.loads(request.POST.get("post_data"))
-            print(post_data)
             if not post_data["room_id"]:
                 #没有任何修改
                 res={"status":2,"msg":""}
@@ -139,14 +136,11 @@ def reg(request):
     if request.method == "POST":
         ret = {"status": 0, "msg": ""}
         form_obj = forms.RegForm(request.POST)
-        print(request.POST)
         avatar_img = request.FILES.get("avatar")
-        print(form_obj.is_valid())
         # 帮我做校验
         if form_obj.is_valid():
             # 校验通过，去数据库创建一个新的用户
             form_obj.cleaned_data.pop("re_password")
-            print(form_obj.cleaned_data)
             try:
                 models.UserInfo.objects.create_user(**form_obj.cleaned_data)
             except Exception as e:
@@ -157,8 +151,6 @@ def reg(request):
             print(form_obj.errors)
             ret["status"] = 1
             ret["msg"] = form_obj.errors
-            print(ret)
-            print("=" * 120)
             return JsonResponse(ret)
             # 生成一个form对象
     form_obj = forms.RegForm()
@@ -176,14 +168,16 @@ def detail(request):
         # print(choose_date)
         # print(time_id)
         # print(models.Book.objects.all())
-        destination=models.Book.objects.filter(date=choose_date,time_id=time_id,room_id=room_id)
+        destination=models.Book.objects.filter(time_id=time_id,room_id=room_id)
         # print(destination[0].date)
         if destination:
-            print(destination[0].coursename)
             destination=destination[0]
     # 给前端返回详情信息
-            res={"status":1,"msg":"","coursename":destination.coursename,"teacher":destination.teacher,
-                "printel":destination.printel,"adminer":destination.adminer}
+            if destination.batch or destination.date==choose_date:
+                res={"status":1,"msg":"","coursename":destination.coursename,"teacher":destination.teacher,
+                    "printel":destination.printel,"adminer":destination.adminer}
+            else:
+                res={"status":0,"msg":"",}
         else:
             res={"status":0,"msg":"",}
     return HttpResponse(json.dumps(res))
@@ -195,7 +189,6 @@ def acc_logout(request):
 def check_username_exist(request):
     username=request.GET.get("username")
     res={"status":0,"msg":""}
-    print(models.UserInfo.objects.filter(username=username))
     if models.UserInfo.objects.filter(username=username):
         res = {"status": 1, "msg": ""}
     return HttpResponse(json.dumps(res))
