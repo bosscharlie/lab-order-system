@@ -173,7 +173,7 @@ def detail(request):
         if destination:
             destination=destination[0]
     # 给前端返回详情信息
-            if destination.batch or destination.date==choose_date:
+            if destination.batch or destination.date==datetime.datetime.strptime(choose_date,"%Y-%m-%d").date():
                 res={"status":1,"msg":"","coursename":destination.coursename,"teacher":destination.teacher,
                     "printel":destination.printel,"adminer":destination.adminer}
             else:
