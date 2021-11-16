@@ -233,7 +233,7 @@ def room(request,roomid,choose_date):
             status=0
             coursename=''
             for book in book_list:
-                if (book.date==day or book.batch) and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
+                if (book.date==day or (book.batch and (day-book.date).days%7==0)) and book.time_id==time[0] and (book.status==2 or (book.status==1 and request.user.username==book.user.username)):
                     flag=True
                     status=book.status
                     coursename=book.coursename
