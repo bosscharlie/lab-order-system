@@ -168,16 +168,21 @@ def detail(request):
         # print(choose_date)
         # print(time_id)
         # print(models.Book.objects.all())
-        destination=models.Book.objects.filter(time_id=time_id,room_id=room_id)
+        destination1=models.Book.objects.filter(time_id=time_id,room_id=room_id)
+        destination2=models.Book.objects.filter(batch=True,room_id=room_id)
         # print(destination[0].date)
-        if destination:
-            destination=destination[0]
-    # 给前端返回详情信息
-            if destination.batch or destination.date==datetime.datetime.strptime(choose_date,"%Y-%m-%d").date():
-                res={"status":1,"msg":"","coursename":destination.coursename,"teacher":destination.teacher,
-                    "printel":destination.printel,"adminer":destination.adminer}
+        if destination1 or destination2:
+            # print(destination.filter(date=choose_date))
+            if destination1:
+                destination=destination1[0]
             else:
-                res={"status":0,"msg":"",}
+                destination=destination2[0]
+    # 给前端返回详情信息
+            # print(destination)
+            # print(destination.date)
+            # print(datetime.datetime.strptime(choose_date,"%Y-%m-%d").date())
+            res={"status":1,"msg":"","coursename":destination.coursename,"teacher":destination.teacher,
+                "printel":destination.printel,"adminer":destination.adminer}
         else:
             res={"status":0,"msg":"",}
     return HttpResponse(json.dumps(res))
